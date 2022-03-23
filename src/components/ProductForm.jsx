@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import ProductList from './ProductList'
 import axios from "axios"
 
 
@@ -7,6 +8,8 @@ function ProductForm() {
     const [title, setTitle] = useState("")
     const [price, setPrice] = useState(0)
     const [description, setDescription] = useState("")
+    const [products, setProducts] = useState([])
+    const [loaded, setLoaded] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -22,6 +25,16 @@ function ProductForm() {
         })
         .catch(err => console.log(err))
     }
+
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/api/products')
+        .then(res => {
+            setProducts(res.data)
+            setLoaded(true)
+        })
+        .catch(err => console.log(err))
+    },[])
 
   return (
     <div>
@@ -40,6 +53,9 @@ function ProductForm() {
             </div>
             <button>Create</button>
         </form>
+        <hr/>
+        <h1>All products: </h1>
+        {loaded && <ProductList products={products}/>}
     </div>
   )
 }
